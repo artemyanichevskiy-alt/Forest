@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><title>Fortress Launcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Philosopher:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<div id="bg"></div><div id="shade"></div>
+<div id="app">
+  <aside>
+    <div class="logo">ForestCraft</div>
+    <nav>
+      <button data-tab="play" class="on">Играть</button>
+      <button data-tab="packs">Сборки</button>
+      <button data-tab="mod">Моды</button>
+      <button data-tab="shader">Шейдеры</button>
+      <button data-tab="resourcepack">Ресурспаки</button>
+      <button data-tab="map">Карты</button>
+      <button data-tab="ai">ИИ</button>
+      <button data-tab="visuals" class="vis"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Визуалы<span class="price" id="visprice">238 ₽</span></button>
+      <button data-tab="skin">Скин</button>
+      <button data-tab="acc">Аккаунты</button>
+      <button data-tab="set">Настройки</button>
+    </nav>
+    <button id="gamedir" class="folder" title="Открыть папку игры (моды, ресурспаки, шейдеры, миры)" aria-label="Открыть папку игры">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z"/></svg>
+    </button>
+    <div id="who" class="who"><canvas id="avatar" width="44" height="44"></canvas><span id="whoname">Нет аккаунта</span></div>
+  </aside>
+  <main>
+    <section id="tab-play" class="tab on">
+      <div class="pillrow"><button class="pill" id="accpill" title="Сменить аккаунт или скин"><canvas id="pillav" width="28" height="28"></canvas><span id="pillname">Нет аккаунта</span><span class="muted">▾</span></button></div>
+      <h1>Выбери версию и заходи в лес</h1>
+      <div class="chips" id="chips"></div>
+      <div class="row">
+        <label>Сборка<select id="pack"></select></label>
+        <label>Версия<select id="ver"></select></label>
+        <label>Загрузчик<select id="loader"><option value="vanilla">Без модов (Vanilla)</option><option value="fabric">Fabric</option><option value="forge">Forge</option><option value="neoforge">NeoForge</option></select></label>
+      </div>
+      <p class="muted small">Нажми «Установить» — лаунчер скачает игру, Java и всё нужное. Когда версия установлена, кнопка станет «Играть».</p>
+      <div class="bottom">
+        <div id="ptext" class="muted">Всё готово к запуску</div>
+        <div class="bar"><i id="pbar"></i></div>
+        <button id="play">Установить</button>
+      </div>
+    </section>
+
+    <section id="tab-packs" class="tab">
+      <h1>Сборки</h1>
+      <button id="newpack">+ Новая сборка</button>
+      <div class="collapse" id="newpanel"><div class="inner"><div class="panel">
+        <input id="pname" placeholder="Название сборки" maxlength="40">
+        <div class="row" style="margin-top:12px">
+          <label>Тип версии<select id="ptype"><option value="release">Релиз</option><option value="snapshot">Снапшот</option><option value="old_beta">Бета</option><option value="old_alpha">Альфа</option></select></label>
+          <label>Загрузчик<select id="ploader"><option value="fabric">Fabric</option><option value="forge">Forge</option><option value="neoforge">NeoForge</option><option value="vanilla">Vanilla</option></select></label>
+          <label>Версия<select id="pver"></select></label>
+        </div>
+        <label class="sw"><input type="checkbox" id="pnotify" checked><span></span>Уведомления (запуск игры, ошибки)</label>
+        <label class="sw"><input type="checkbox" id="pskin" checked><span></span>Мой скин через ресурспак</label>
+        <label class="sw"><input type="checkbox" id="pskinmod"><span></span>Мод скинов: скин виден в игре (CustomSkinLoader)</label>
+        <p class="muted small">В списке версий только те, для которых есть выбранный загрузчик. Мод скинов доступен для Fabric, Forge и NeoForge.</p>
+        <button id="mkpack">Создать</button>
+      </div></div></div>
+      <div id="packlist"></div>
+      <h2>Готовые сборки Modrinth</h2>
+      <div class="row"><input id="mq" placeholder="Поиск сборок…"></div>
+      <div class="muted small" id="ptext2"></div>
+      <div id="mlist"></div>
+    </section>
+
+    <section id="tab-content" class="tab">
+      <h1 id="ctitle"></h1>
+      <div class="row">
+        <select id="src"><option value="modrinth">Modrinth</option><option value="curseforge">CurseForge</option></select>
+        <input id="q" placeholder="Поиск…">
+        <button class="ghost" id="opendir">Открыть папку</button>
+      </div>
+      <div class="muted small" id="chint"></div>
+      <div class="row" id="addrow">
+        <button class="ghost" id="addfile">Добавить файл…</button>
+        <input id="urlin" placeholder="…или вставь ссылку на файл (https://…)">
+        <button class="ghost" id="urlgo">Скачать</button>
+      </div>
+      <div class="muted small" id="cstatus"></div>
+      <div id="list"></div>
+      <button class="ghost" id="more">Показать ещё</button>
+    </section>
+
+    <section id="tab-ai" class="tab">
+      <h1>ИИ-помощник</h1>
+      <div class="muted small" id="aihint"></div>
+      <div class="collapse" id="aikeypanel"><div class="inner"><div class="panel">
+        <div class="row">
+          <label>Сервис<select id="aiprov"><option value="auto">Определить по ключу</option><option value="openai">OpenAI</option><option value="anthropic">Claude (Anthropic)</option><option value="gemini">Google Gemini</option><option value="custom">Другой (OpenAI-совместимый)</option></select></label>
+          <label>Модель (необязательно)<input id="aimodel" placeholder="например gpt-4o-mini"></label>
+        </div>
+        <label>Ключ API<input id="aikey" type="password" placeholder="sk-…" autocomplete="off"></label>
+        <label id="aibaserow" style="display:none">Адрес API<input id="aibase" placeholder="https://openrouter.ai/api/v1"></label>
+        <button id="aisave">Сохранить</button>
+        <p class="muted small">Ключ хранится только на этом компьютере, в файле настроек лаунчера, и отправляется только выбранному сервису. Запросы ИИ платные по тарифу твоего ключа.</p>
+      </div></div></div>
+      <button class="ghost" id="aikeybtn">Настройки ключа</button>
+      <div class="chips" id="aichips" style="margin-top:14px"></div>
+      <div id="aimsgs"></div>
+      <div class="aibar row">
+        <input id="aiq" placeholder="Например: собери моды для выживания с оптимизацией FPS" maxlength="500">
+        <button id="aisend">Спросить</button>
+      </div>
+    </section>
+
+    <section id="tab-visuals" class="tab">
+      <h1>Визуалы</h1>
+      <div class="panel locked" id="vislocked">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><b style="font-size:18px">Платные визуалы</b><span class="price big2">238 ₽</span><span class="muted small">в разработке</span></div>
+        <p class="muted small">Сейчас в наборе только переключатель. Эффекты убийства, шапка и цвета мира добавляются по мере готовности и войдут в эту же покупку.</p>
+        <button id="paybtn">Оплатить 238 ₽</button>
+        <div id="paybox" style="display:none">
+          <ol class="small" style="line-height:1.7;padding-left:20px;margin:10px 0">
+            <li>Номер карты уже скопирован, и открылся СберБанк Онлайн.</li>
+            <li>Переведи <b>238 ₽</b> по номеру карты <b id="paycard"></b> (<span id="paybank"></span>).</li>
+            <li>Отправь чек разработчику — он пришлёт код доступа.</li>
+            <li>Вставь код ниже и нажми «Активировать».</li>
+          </ol>
+          <button class="ghost" id="paycopy">Скопировать номер ещё раз</button>
+        </div>
+        <label style="margin-top:10px">Код доступа<input id="viscode" placeholder="XXXX-XXXX-XXXX" autocomplete="off"></label>
+        <button id="visunlock">Активировать</button>
+      </div>
+      <div class="soon" id="visunlocked">
+        <svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+        <label class="sw" id="visrow"><input type="checkbox" id="visswitch" checked><span></span>Включить визуалы</label>
+        <p class="muted" id="vistext">Визуалы включены. Скоро здесь появятся эффекты и украшения.</p>
+      </div>
+    </section>
+
+    <section id="tab-skin" class="tab">
+      <h1>Скин</h1>
+      <div class="row"><canvas id="head" width="96" height="96"></canvas>
+        <div><button id="pickskin">Загрузить скин (PNG)</button> <button class="ghost" id="rmskin">Убрать</button>
+        <input type="file" id="file" accept="image/png" hidden></div></div>
+      <p class="muted small">Подходит PNG 64×64 или 64×32. В офлайн-режиме скин работает через ресурспак «ForestCraftSkin», который лаунчер сам кладёт в игру при запуске. Если скина не видно — включи этот ресурспак в настройках игры.</p>
+    </section>
+
+    <section id="tab-acc" class="tab">
+      <h1>Аккаунты</h1>
+      <div class="row"><input id="nick" placeholder="Ник (латиница, 3–16 символов)" maxlength="16"><button id="addacc">Добавить</button></div>
+      <div id="acclist"></div>
+      <p class="muted small">Вход офлайн: пароль не нужен, игра запускается без лицензии на серверы с выключенным online-mode.</p>
+    </section>
+
+    <section id="tab-set" class="tab">
+      <h1>Настройки</h1>
+      <h2>Память</h2>
+      <label>Выделить Minecraft: <b id="ramv"></b><input type="range" id="ram" min="1024" max="16384" step="512"></label>
+      <div class="row"><input type="number" id="ramn" min="512" step="256" style="max-width:130px"><span class="muted small">МБ</span>
+        <button class="ghost" data-ram="2048">2 ГБ</button><button class="ghost" data-ram="4096">4 ГБ</button><button class="ghost" data-ram="6144">6 ГБ</button><button class="ghost" data-ram="8192">8 ГБ</button></div>
+      <div class="muted small" id="ramhint"></div>
+      <h2>Подстройка под устройство</h2>
+      <div class="panel">
+        <p class="muted small" style="margin-top:0">Лаунчер определит процессор, память и видеокарту, подберёт выделение памяти, дальность прорисовки, частицы и шейдеры и применит это к выбранной сборке. Подбор примерный, потом всё можно поменять вручную.</p>
+        <button id="optscan">Подстроить под моё устройство</button>
+        <div id="optbox" style="display:none">
+          <div class="muted small" id="optinfo" style="margin:12px 0"></div>
+          <div class="muted small">Целевой FPS</div>
+          <div class="chips" id="optfps"><button data-f="60" class="on">60</button><button data-f="90">90</button><button data-f="120">120</button></div>
+          <label>Шейдеры<select id="optshader"></select></label>
+          <label class="sw"><input type="checkbox" id="optmods" checked><span></span>Поставить моды оптимизации (Sodium, Lithium, Iris и др.)</label>
+          <div class="muted small" id="optplan" style="margin:6px 0"></div>
+          <button id="optapply">Применить</button>
+          <div class="muted small" id="optres" style="margin-top:10px;white-space:pre-wrap"></div>
+        </div>
+      </div>
+      <h2>Проверка вирусов (VirusTotal)</h2>
+      <div class="panel">
+        <p class="muted small" style="margin-top:0">Каждый скачанный мод, шейдер, ресурспак и карта перед установкой проверяется через VirusTotal. Если файл признан вредоносным, он удаляется и в папку игры не попадает.</p>
+        <label>Ключ API VirusTotal<input id="vtkey" type="password" placeholder="вставь ключ" autocomplete="off"></label>
+        <button id="savevt">Сохранить</button>
+        <div class="muted small" id="vtstate" style="margin-top:8px"></div>
+        <p class="muted small">Бесплатный ключ: virustotal.com → войти → профиль → API key. Лимит бесплатного ключа 4 проверки в минуту, поэтому установка нескольких файлов идёт медленнее. Без ключа проверка выключена.</p>
+      </div>
+      <h2>Папка данных</h2>
+      <div class="row"><input id="dpath" readonly><button id="pickdir">Выбрать диск / папку…</button></div>
+      <div class="row"><button class="ghost" id="defdir">Вернуть стандартную</button><button class="ghost" id="opendata">Открыть</button></div>
+      <p class="muted small">Сюда качаются игра, Java, моды, сборки и миры. Для другого диска выбери там любую папку, внутри создастся ForestCraft. Файлы можно перенести сразу.</p>
+      <h2>CurseForge</h2>
+      <label>Ключ CurseForge API <input id="cfkey" placeholder="Нужен для карт и поиска в CurseForge"></label>
+      <p class="muted small">Бесплатный ключ: console.curseforge.com → API keys.</p>
+      <div class="row"><button class="ghost" id="savekey">Сохранить ключ</button><button class="ghost" id="openroot">Папка лаунчера</button></div>
+    </section>
+  </main>
+  <div id="side">
+    <div class="sh"><b id="sidetitle">Установлено</b><button class="ghost" id="sideclose" title="Скрыть">›</button></div>
+    <div class="stabs"><button data-k="ver" class="on">Версии</button><button data-k="mod">Моды</button><button data-k="resourcepack">Ресурспаки</button><button data-k="shader">Шейдеры</button></div>
+    <input id="sidef" placeholder="Фильтр…">
+    <div id="sidelist"></div>
+    <div class="sf"><span id="sidecount" class="muted small"></span><button class="ghost" id="sidedir">Папка</button></div>
+  </div>
+</div>
+<button class="ghost" id="sidetoggle">Установлено</button>
+<div id="modal" class="closed"><div class="mbox">
+  <button class="ghost mclose" id="mclose" title="Закрыть">✕</button>
+  <div class="mhead"><img id="micon" alt=""><div class="mtitle"><h2 id="mtitle"></h2><div class="muted small" id="mmeta"></div></div></div>
+  <p id="msum"></p><div class="mchips" id="mchips"></div>
+  <div id="mbody" class="muted"></div>
+  <div class="mfoot"><button class="ghost" id="mweb" style="display:none">Открыть на сайте</button><button id="minstall" style="display:none">Установить</button></div>
+</div></div>
+<div id="accpop" class="pop closed"></div>
+<div id="toast"></div>
+<script src="app.js"></script>
+</body></html>

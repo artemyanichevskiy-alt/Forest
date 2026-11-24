@@ -1,0 +1,60 @@
+{
+  "name": "forestcraft-launcher",
+  "version": "1.0.0",
+  "description": "ForestCraft - Minecraft Java launcher",
+  "author": "ForestCraft",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis --publish never"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.forestcraft.launcher",
+    "productName": "Fortress Launcher",
+    "files": [
+      "main.js",
+      "preload.js",
+      "core.js",
+      "index.html",
+      "style.css",
+      "app.js",
+      "forest.jpg",
+      "icon.png"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Fortress Launcher",
+      "runAfterFinish": true,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "installerHeaderIcon": "icon.ico",
+      "installerSidebar": "sidebar.bmp",
+      "uninstallerSidebar": "sidebar.bmp",
+      "language": "1049",
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "Fortress-Launcher-Setup.${ext}"
+    }
+  }
+}
